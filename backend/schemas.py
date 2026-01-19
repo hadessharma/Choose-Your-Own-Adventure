@@ -49,7 +49,7 @@ class Story(BaseModel):
     title: str
     genre: str
     blurb: str
-    start_node_id: int
+    start_node_id: Optional[int] = None
 
     class Config:
         orm_mode = True
