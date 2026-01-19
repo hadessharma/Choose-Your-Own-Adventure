@@ -1,38 +1,32 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+# --- Database / Internal Schemas ---
+
 class OptionBase(BaseModel):
     label: str
-    to_node_id: Optional[int] = None # For upload, might be relative or index? Or we assume explicit IDs in upload? 
-    # Actually, for upload, we probably want to ignore database IDs and use temporary IDs or just structure.
-    # The requirement says: "Accepts a JSON object representing a full story tree (nodes + options)".
-    # Let's assume nested structure or list of nodes.
+    to_node_id: Optional[int] = None
 
 class OptionCreate(OptionBase):
-    target_node_index: int # helper to link nodes in the list if using list upload
-    # OR 
-    # from_node_id: int
-    # to_node_id: int
-    pass
+    target_node_index: int 
 
 class NodeBase(BaseModel):
     content: str
     is_ending: bool = False
 
 class NodeCreate(NodeBase):
-    # If uploading a list of nodes, we might need a temporary ID to link options.
-    id: int # Client-side ID for linking
+    id: int 
     options: List["OptionCreateForUpload"] = []
 
 class OptionCreateForUpload(BaseModel):
     label: str
-    to_node_id: int # Points to the 'id' in NodeCreate
+    to_node_id: int 
 
 class StoryCreate(BaseModel):
     title: str
     genre: str
     blurb: str
-    start_node_id: int # Points to the 'id' in NodeCreate of the start node
+    start_node_id: int 
     nodes: List[NodeCreate]
 
 class Option(OptionBase):
@@ -67,3 +61,21 @@ class PlayNode(NodeBase):
 
     class Config:
         orm_mode = True
+
+# --- New Flexible Upload Schemas ---
+
+class OptionUpload(BaseModel):
+    label: str
+    target_node_id: str
+
+class NodeUpload(BaseModel):
+    id: str
+    text: str
+    is_ending: bool = False
+    options: List[OptionUpload] = []
+
+class StoryUpload(BaseModel):
+    title: str
+    genre: str
+    description: str
+    nodes: List[NodeUpload]

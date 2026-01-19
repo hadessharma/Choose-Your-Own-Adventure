@@ -14,6 +14,10 @@ export const getNextNode = (currentNodeId, choiceId) => api.post('/story/next', 
 // These are query parameters by default in FastAPI unless defined as Body.
 // So { params: ... } is correct.
 
-export const uploadStory = (storyData) => api.post('/upload_story', storyData);
+export const uploadStory = (storyData, adminSecret) => api.post('/upload_story', storyData, {
+    headers: {
+        'X-Admin-Secret': adminSecret
+    }
+});
 
 export default api;
