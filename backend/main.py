@@ -40,6 +40,10 @@ def verify_admin(x_admin_secret: Optional[str] = Header(None)):
 
 @app.post("/upload_story", dependencies=[Depends(verify_admin)])
 def upload_story(story: schemas.StoryUpload, db: Session = Depends(get_db)):
+    # 0. Check for duplicate title
+    if db.query(models.Story).filter(models.Story.title == story.title).first():
+        raise HTTPException(status_code=400, detail="Story with this title already exists")
+
     # 1. Create Story
     db_story = models.Story(
         title=story.title,
