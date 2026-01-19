@@ -5,6 +5,7 @@ const api = axios.create({
 });
 
 export const getStories = (genre) => api.get('/stories', { params: { genre } });
+export const getGenres = () => api.get('/genres');
 export const getStoryStart = (id) => api.get(`/story/${id}/play`);
 export const getNextNode = (currentNodeId, choiceId) => api.post('/story/next', null, { params: { current_node_id: currentNodeId, choice_id: choiceId } });
 // Note: Backend expects query params for correct mapping or body. 

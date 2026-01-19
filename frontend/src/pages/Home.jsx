@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { getStories } from '../api';
+import { getStories, getGenres } from '../api';
 import StoryCard from '../components/StoryCard';
 
 const Home = () => {
     const [stories, setStories] = useState([]);
+    const [genres, setGenres] = useState([]);
     const [genreFilter, setGenreFilter] = useState('');
+
+    useEffect(() => {
+        // Fetch genres on mount
+        getGenres().then(res => {
+            setGenres(res.data);
+        }).catch(err => console.error("Failed to fetch genres", err));
+    }, []);
 
     useEffect(() => {
         getStories(genreFilter || null).then(res => {
@@ -40,9 +48,9 @@ const Home = () => {
                         }}
                     >
                         <option value="">All Genres</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Sci-Fi">Sci-Fi</option>
+                        {genres.map(g => (
+                            <option key={g} value={g}>{g}</option>
+                        ))}
                     </select>
                 </div>
             </div>

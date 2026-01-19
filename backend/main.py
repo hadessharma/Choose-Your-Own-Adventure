@@ -104,6 +104,13 @@ def get_stories(genre: str = None, db: Session = Depends(get_db)):
         query = query.filter(models.Story.genre == genre)
     return query.all()
 
+@app.get("/genres", response_model=List[str])
+def get_genres(db: Session = Depends(get_db)):
+    # Fetch distinct genres
+    genres = db.query(models.Story.genre).distinct().all()
+    # genres is a list of tuples like [('Fantasy',), ('Sci-Fi',)]
+    return [g[0] for g in genres if g[0]]
+
 @app.get("/story/{id}/play", response_model=schemas.PlayNode)
 def play_story(id: int, db: Session = Depends(get_db)):
     story = db.query(models.Story).filter(models.Story.id == id).first()
