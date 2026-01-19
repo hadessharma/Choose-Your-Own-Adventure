@@ -7,7 +7,6 @@ const Reader = () => {
     const navigate = useNavigate();
     const [node, setNode] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [history, setHistory] = useState([]); // to track history if we want to go back, though not required by prompt.
 
     useEffect(() => {
         getStoryStart(id).then(res => {
@@ -30,45 +29,34 @@ const Reader = () => {
         });
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (!node) return <div>Story not found or error loading.</div>;
+    if (loading) return <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>Loading...</div>;
+    if (!node) return <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>Story not found or error loading.</div>;
 
     return (
-
-        <div style={{
-            padding: '60px 20px',
-            maxWidth: '800px',
-            margin: '0 auto',
-            minHeight: '80vh',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-        }}>
+        <div className="container animate-fade-in" style={{ maxWidth: '800px', padding: '4rem 2rem', minHeight: '60vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{
                 fontSize: '1.4rem',
                 lineHeight: '1.8',
-                marginBottom: '60px',
+                marginBottom: '3rem',
                 color: 'var(--color-text-primary)',
                 textAlign: 'justify'
             }}>
                 {node.content}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
                 {!node.is_ending ? (
                     node.options.map(option => (
                         <button
                             key={option.id}
+                            className="btn btn-secondary"
                             onClick={() => handleChoice(option)}
                             style={{
-                                padding: '16px 32px',
-                                fontSize: '1.1rem',
                                 width: '100%',
-                                maxWidth: '500px',
                                 textAlign: 'left',
-                                display: 'flex',
                                 justifyContent: 'space-between',
-                                alignItems: 'center'
+                                fontSize: '1.1rem',
+                                padding: '1.2rem 2rem'
                             }}
                         >
                             {option.label}
@@ -76,9 +64,9 @@ const Reader = () => {
                         </button>
                     ))
                 ) : (
-                    <div style={{ animation: 'fadeIn 1s ease' }}>
-                        <h3 style={{ fontSize: '2rem', color: 'var(--color-accent)', marginBottom: '20px' }}>The End</h3>
-                        <button onClick={() => navigate('/')}>Back to Menu</button>
+                    <div className="animate-fade-in" style={{ textAlign: 'center' }}>
+                        <h3 style={{ fontSize: '2rem', color: 'var(--color-accent)', marginBottom: '1.5rem' }}>The End</h3>
+                        <button className="btn btn-primary" onClick={() => navigate('/')}>Back to Menu</button>
                     </div>
                 )}
             </div>

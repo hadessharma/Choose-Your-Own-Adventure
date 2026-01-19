@@ -21,52 +21,43 @@ const Home = () => {
     }, [genreFilter]);
 
     return (
-        <div style={{ padding: '40px', maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '40px',
-                flexWrap: 'wrap',
-                gap: '20px'
-            }}>
-                <h1>Choose Your Adventure</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <label style={{ fontSize: '1.1rem', fontWeight: '500', color: 'var(--color-text-secondary)' }}>Filter by Genre:</label>
-                    <select
-                        onChange={(e) => setGenreFilter(e.target.value)}
-                        value={genreFilter}
-                        style={{
-                            padding: '10px 20px',
-                            borderRadius: '8px',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            backgroundColor: 'var(--color-bg-secondary)',
-                            color: 'var(--color-text-primary)',
-                            fontSize: '1rem',
-                            cursor: 'pointer',
-                            outline: 'none'
-                        }}
-                    >
-                        <option value="">All Genres</option>
-                        {genres.map(g => (
-                            <option key={g} value={g}>{g}</option>
-                        ))}
-                    </select>
-                </div>
+        <div className="container animate-fade-in">
+            {/* Hero Section */}
+            <div className="hero">
+                <h1>Choose Your Level</h1>
+                <p className="hero-subtitle">
+                    Immerse yourself in interactive tales where your choices shape the narrative.
+                    Select a story below to begin your journey.
+                </p>
             </div>
 
-            {/* Grid Layout */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '30px',
-                alignItems: 'stretch'
-            }}>
+            {/* Filter Bar */}
+            <div className="filter-bar">
+                <button
+                    className={`btn ${genreFilter === '' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setGenreFilter('')}
+                >
+                    All Genres
+                </button>
+                {genres.map(g => (
+                    <button
+                        key={g}
+                        className={`btn ${genreFilter === g ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setGenreFilter(g)}
+                    >
+                        {g}
+                    </button>
+                ))}
+            </div>
+
+            {/* Story Grid */}
+            <div className="story-grid">
                 {stories.map(story => (
                     <StoryCard key={story.id} story={story} />
                 ))}
             </div>
 
+            {/* Empty State */}
             {stories.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '60px', color: 'var(--color-text-secondary)' }}>
                     <h3>No stories found</h3>

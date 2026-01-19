@@ -1,123 +1,72 @@
 import React, { useState } from 'react';
-import { uploadStory } from '../api';
 
 const Admin = () => {
-    const [jsonInput, setJsonInput] = useState('');
-    const [status, setStatus] = useState('');
-    const [adminSecret, setAdminSecret] = useState('');
-
-    const handlePreFill = () => {
-        const template = {
-            title: "New Adventure",
-            genre: "Fantasy",
-            description: "A short description of the adventure.",
-            nodes: [
-                {
-                    id: "n1",
-                    text: "You are standing in a dark forest.",
-                    options: [
-                        { label: "Go North", target_node_id: "n2" },
-                        { label: "Go South", target_node_id: "n3" }
-                    ]
-                },
-                {
-                    id: "n2",
-                    text: "You found a treasure chest!",
-                    is_ending: true,
-                    options: []
-                },
-                {
-                    id: "n3",
-                    text: "You fell into a pit.",
-                    is_ending: true,
-                    options: []
-                }
-            ]
-        };
-        setJsonInput(JSON.stringify(template, null, 2));
+    const template = {
+        title: "New Adventure",
+        genre: "Fantasy",
+        blurb: "A short description...",
+        nodes: [
+            {
+                id: "n1",
+                text: "Start of the story...",
+                options: [
+                    { label: "Option A", target_node_id: "n2" }
+                ]
+            },
+            {
+                id: "n2",
+                text: "The End.",
+                is_ending: true,
+                options: []
+            }
+        ]
     };
 
-    const handleUpload = () => {
-        try {
-            const data = JSON.parse(jsonInput);
-            if (!data.title || !data.nodes) {
-                setStatus('Error: Missing required fields (title, nodes)');
-                return;
-            }
-            if (!adminSecret) {
-                setStatus('Error: Please enter Admin Secret');
-                return;
-            }
-
-            uploadStory(data, adminSecret).then(res => {
-                setStatus('Upload successful! Story ID: ' + res.data.story_id);
-                setJsonInput('');
-            }).catch(err => {
-                console.error(err);
-                if (err.response && err.response.status === 401) {
-                    setStatus('Error: Unauthorized. Check your Admin Secret.');
-                } else {
-                    setStatus('Error uploading story: ' + (err.response?.data?.detail || err.message));
-                }
-            });
-        } catch (e) {
-            setStatus('Invalid JSON format.');
-        }
+    const handleCopy = () => {
+        navigator.clipboard.writeText(JSON.stringify(template, null, 2));
+        alert("Template copied to clipboard!");
     };
 
     return (
-        <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
-            <h1>Admin Upload</h1>
+        <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto' }}>
+            <h1>Submit Your Story</h1>
+            <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>
+                We are currently accepting story submissions via email. Please structure your story using the JSON format below and send it to:
+            </p>
 
-            <div style={{ marginBottom: '20px' }}>
-                <input
-                    type="password"
-                    placeholder="Enter Admin Secret"
-                    value={adminSecret}
-                    onChange={(e) => setAdminSecret(e.target.value)}
-                    style={{
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        backgroundColor: 'var(--color-bg-secondary)',
-                        color: 'var(--color-text-primary)',
-                        width: '100%',
-                        maxWidth: '300px',
-                        marginBottom: '10px',
-                        display: 'block'
-                    }}
-                />
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                <button onClick={handlePreFill}>Pre-fill Template</button>
-                <button onClick={handleUpload} style={{ backgroundColor: 'var(--color-accent)' }}>Upload Story</button>
-            </div>
-
-            <textarea
-                rows="20"
-                value={jsonInput}
-                onChange={(e) => setJsonInput(e.target.value)}
-                placeholder="Paste story JSON here..."
-                style={{
-                    width: '100%',
-                    fontFamily: 'monospace',
-                    padding: '16px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    backgroundColor: 'rgba(0,0,0,0.2)',
-                    color: 'var(--color-text-primary)'
-                }}
-            />
-            {status && <div style={{
-                marginTop: '20px',
-                padding: '16px',
-                borderRadius: '8px',
-                backgroundColor: status.includes('Error') ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                color: status.includes('Error') ? '#fca5a5' : '#6ee7b7'
+            <div style={{
+                background: 'var(--color-bg-secondary)',
+                padding: '20px',
+                borderRadius: '12px',
+                marginBottom: '2rem',
+                border: '1px solid rgba(255,255,255,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
             }}>
-                {status}
-            </div>}
+                <a href="mailto:de.sharma993@gmail.com" style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-accent)' }}>
+                    de.sharma993@gmail.com
+                </a>
+                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>(Click to send)</span>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3>JSON Format</h3>
+                <button className="btn btn-secondary" onClick={handleCopy}>Copy Template</button>
+            </div>
+
+            <pre style={{
+                background: 'rgba(0,0,0,0.3)',
+                padding: '20px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                overflowX: 'auto',
+                fontFamily: 'monospace',
+                fontSize: '0.9rem',
+                color: '#e2e8f0'
+            }}>
+                {JSON.stringify(template, null, 2)}
+            </pre>
         </div>
     );
 };
